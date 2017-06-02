@@ -37,6 +37,8 @@ warning_data_points = []
 alert_1_data_points = []
 alert_2_data_points = []
 
+database_file = r"C:\Users\jrfar\Documents\python\coral\db\realtime.db"
+
 main = Tk()
 
 def get_pixel_color(image_object, x,y):
@@ -85,7 +87,7 @@ def count_pixels(im):
 	return pixels
 
 def get_percentages(im):
-	global no_stress_color_range, watch_color_range, warning_color_range, alert_1_color_range, alert_2_color_range, no_stress, watch_color, warning_color, alert_1_color, alert_2_color, black_color_range, black, land_range, land
+	global no_stress_color_range, watch_color_range, warning_color_range, alert_1_color_range, alert_2_color_range, no_stress, watch_color, warning_color, alert_1_color, alert_2_color, black_color_range, black, land_range, land, database_file, bleaching_database_view
 	no_stress, watch_color, warning_color, alert_1_color, alert_2_color = 0,0,0,0,0
 	pixels  = float(count_pixels(im))
 	print pixels, no_stress, watch_color, warning_color, alert_1_color, alert_2_color
@@ -99,8 +101,11 @@ def get_percentages(im):
 		database_input_list[database_input_list.index(element)] == element
 	database_input = "".join(str(database_input_list))
 	print database_input
-	with open(os.path.normpath(r"C:\Users\jrfar\Documents\python\coral\db\realtime.db"), "a") as database:
+	with open(os.path.normpath(database_file), "a") as database:
 		database.write(database_input+'\n')	
+	with open(database_file, "r") as database:
+		info_tmp = database.read()
+		bleaching_database_view.insert(INSERT, info_tmp)
 
 def generate_graphs(database_file):
 	global dataset, x_values, no_stress, watch_data_points, warning_data_points, alert_1_data_points, alert_2_data_points
@@ -163,13 +168,15 @@ def save_graph():
 # generate_graphs("C:\Users\jrfar\Documents\python\coral\db\hist.db")
 
 # buttons and menus and crap
+bleaching_database_view = Text(main, bg = "black", fg = "white", insertbackground = "white",tabs = ("1c"))
+bleaching_database_view.grid(row = 1, column = 0, columnspan=2)
 menubar = Menu(main)
 menubar.add_command(label="Quit!", command=main.quit)
 menubar.add_command(label="Select database file!", command=get_database)
 menubar.add_command(label="Save the current graph!", command=lambda:generate_graphs("C:\Users\jrfar\Documents\python\coral\db\realtime.db"))
 
 Button(main,text='Get percentages!', command=lambda:analyze_images()).grid(row = 0, column=1)
-Button(main,text='Show graph', command=lambda:generate_graphs(r"C:\Users\jrfar\Documents\python\coral\db\realtime.db")).grid(row = 0, column=2)
+Button(main,text='Show graph', command=lambda:generate_graphs(r"C:\Users\jrfar\Documents\python\coral\db\realtime.db")).grid(row = 0, column=0)
 
 main.config(menu=menubar)
 main.mainloop()

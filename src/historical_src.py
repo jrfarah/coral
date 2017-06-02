@@ -159,6 +159,8 @@ def save_graph():
 # generate_graphs("C:\Users\jrfar\Documents\python\coral\db\hist.db")
 
 # buttons and menus and crap
+bleaching_database_view = Text(main, bg = "black", fg = "white", insertbackground = "white",tabs = ("1c"))
+bleaching_database_view.grid(row = 0, column = 0)
 menubar = Menu(main)
 menubar.add_command(label="Quit!", command=main.quit)
 menubar.add_command(label="Select database file!", command=get_database)
