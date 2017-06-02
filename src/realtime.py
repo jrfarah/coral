@@ -104,6 +104,14 @@ def get_percentages(im):
 
 def generate_graphs(database_file):
 	global dataset, x_values, no_stress, watch_data_points, warning_data_points, alert_1_data_points, alert_2_data_points
+	data = []
+	dataset = []
+	no_stress_points = []
+	watch_data_points = []
+	warning_data_points = []
+	alert_1_data_points = []
+	alert_2_data_points = []
+	x_values = []
 	with open(database_file, "r") as database:
 		data = database.read().splitlines()
 		for d1 in data:
@@ -121,6 +129,7 @@ def generate_graphs(database_file):
 	fig, ax = plt.subplots()
 	#plt.ion()
 	# ax.plot(x_values,no_stress_points, color="black", label = 'NO STRESS')
+	print len(x_values), len(watch_data_points), len(warning_data_points), len(alert_1_data_points), len(alert_2_data_points)
 	ax.plot(x_values, watch_data_points, color="blue", label = 'WATCH')
 	ax.plot(x_values, warning_data_points, color="yellow", label = 'WARNING')
 	ax.plot(x_values, alert_1_data_points, color="orange", label = 'ALERT 1')
