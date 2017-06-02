@@ -102,6 +102,14 @@ def get_percentages(im):
 
 def generate_graphs(database_file):
 	global dataset, x_values, no_stress, watch_data_points, warning_data_points, alert_1_data_points, alert_2_data_points
+	data = []
+	dataset = []
+	no_stress_points = []
+	watch_data_points = []
+	warning_data_points = []
+	alert_1_data_points = []
+	alert_2_data_points = []
+	x_values = []
 	with open(database_file, "r") as database:
 		data = database.read().splitlines()
 		for d1 in data:
