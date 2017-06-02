@@ -1,0 +1,413 @@
+<HTML>
+<HEAD>
+<title>NOAA Coral Reef Watch Daily 5-km Satellite Coral Bleaching Heat Stress Degree Heating Week Product (Version 3)</title>
+
+
+<!-------START OF HEADER TEXT FROM INCLUDE STATEMENT-------------------------------------->
+<!-------DO NOT MODIFY THIS SECTION------------------------------------------------------->
+  <link rel="icon" href="/favicon.png" type="image/x-icon" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" type="text/css" href="/crw-style_wide.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="Keywords" Content="Oceanography, Marine, Satellite,
+   Remote Sensing, Coral Reef, Coral Bleaching, Marine Biology,
+   Marine Ecology, Physical Oceanography, Environment, Publication,
+   in situ, observation, CREWS, CRW,
+   NOAA, Government">
+  <meta name="Author" Content="NOAA Coral Reef Watch">
+<TITLE>
+NOAA Coral Reef Watch Program
+</TITLE>  
+<!-- **************** for GSA federal Google Analytics ********************   -->
+<script id="_fed_an_ua_tag" type="text/javascript" src="https://www.star.nesdis.noaa.gov/star/global/js/GA2015/federated-analytics.js?agency=DOC&amp;subagency=NOAA&amp;pua=UA-48915369-6"></script><!-- **********************************************************************   -->
+<script type="text/javascript" src="https://www.star.nesdis.noaa.gov/star/global/js/jquery/jquery-1.7.1.min.js"></script>
+<!-- Add fancyBox -->
+<link rel="stylesheet" href="https://www.star.nesdis.noaa.gov/star/global/js/fancyapps/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen">
+<script type="text/javascript" src="https://www.star.nesdis.noaa.gov/star/global/js/fancyapps/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+<!-- Optionally add helpers - button, thumbnail and/or media -->
+<link rel="stylesheet" href="https://www.star.nesdis.noaa.gov/star/global/js/fancyapps/source/helpers/jquery.fancybox-buttons.css?v=1.0.5" type="text/css" media="screen">
+<script type="text/javascript">
+$(document).ready(function() {
+ $(".fancybox").fancybox({
+ beforeShow: function(){
+  var fancyAlt = $(this.element).find('img').attr('alt');
+  $(".fancybox-inner").find("img").attr("alt",fancyAlt);
+ }
+ });
+});
+
+
+$(document).ready(function(){
+ $("#Map area").fancybox({
+ beforeShow: function(){
+  var fancyAlt = $(this.element).find('img').attr('alt');
+  $(".fancybox-inner").find("img").attr("alt",fancyAlt);
+ }
+ }); 
+});
+
+</script>
+
+
+</head>
+
+<BODY>
+
+<div align="center">
+
+<div id="header">
+  <a href="/satellite/index.php"><img class="header-right" src="/satellite/icons1/crw_banner_small2.png"></a>
+  <a href="http://www.nesdis.noaa.gov"><img class="header-left" src="/satellite/icons1/banner_nesdis_small_4.png"></a>
+     <div id="header-links-NOAA">
+     <a href="http://www.commerce.gov/">DOC</a> > 
+     <a href="http://www.noaa.gov/">NOAA</a> > 
+     <a href="http://www.nesdis.noaa.gov/">NESDIS</a> > 
+     <a href="http://www.star.nesdis.noaa.gov/star/index.php">STAR</a> >
+     <a href="/satellite/index.php">CRW</a>
+     </div>
+     <div id="header-links-CRTF">
+     <a href="http://www.coralreef.gov/">CRTF</a> | 
+     <a href="http://coralreef.noaa.gov/">CRCP</a> | 
+     <a href="/creios.php">CREIOS</a> | 
+     <a href="http://coris.noaa.gov/">CoRIS</a>
+     </div>
+  <img class="header-bottom" src="/satellite/icons1/banner_coral_0202.jpg">
+</div>
+
+<!-------END OF HEADER TEXT FROM INCLUDE STATEMENT-------------------------------------->
+
+
+<div id="content">
+
+
+<div id="main-content-no-navbar-wide">
+
+
+
+<div class="title-section">
+<nobr>Daily 5-km Satellite Coral Bleaching Heat Stress Degree Heating Week Product</nobr>
+<br>
+<font size="-1">(<font color="red">New Version 3, released on 4 May 2017</font>, experimental product)</font>
+</div>
+
+<div class="centered-section">
+<img src="./images_current/cur_b05kmnn_dhw_45ns.gif" usemap="#indexmap"
+ alt="Global Coral Bleaching Heat Stress Degree Heating Week image" border='0'>
+
+<br>
+<table width='900'>
+<tr>
+<td width="25%" align='right'><font size="2" color="red" face="verdana,arial"><b>Current Daily Variables:</b></font></td>
+<td width="25%" align='center'><button type="button" onClick="location='./index_5km_baa_max_r07d.php';">Alert Area (7-day max)</button></td>
+<td width="10%" align='center'><button type="button" onClick="location='./index_5km_hs.php';">HotSpot</button></td>
+<td width="8%"  align='center'><font size="2" color="black" face="verdana,arial">&nbsp;<b><u>DHW</u></b>&nbsp;</font></td>
+<td width="8%"  align='center'><button type="button" onClick="location='./index_5km_sst.php';">SST</button></td>
+<td width="12%" align='center'><button type="button" onClick="location='./index_5km_ssta.php';">Anomaly</button></td>
+<td width="12%" align='center'><button type="button" onClick="location='./index_5km_ssttrend_7d.php';">SST Trend</button></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td>
+<font size="2" color="black" face="verdana,arial">
+<b><nobr>Regional Images:&nbsp;</nobr></b>
+</font>
+</td>
+<td>
+<nobr><b><font size="2" color="darkblue" face="verdana,arial">
+<a href='images_current/cur_b05kmnn_dhw_45ns.gif'>45ns</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_large.gif'>Global</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_east.gif'>East</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_west.gif'>West</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_pacific_930x580.gif'>Pac.</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_indian_930x580.gif'>Ind.</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_satlantic_930x580.gif'>S.Atl.</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_coraltriangle.gif'>Coral Triangle</a>
+<a href='images_current/cur_b05kmnn_dhw_ctr_2790x1740.gif'>[big]</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_crb_930x580.gif'>Caribbean</a>
+<a href='images_current/cur_b05kmnn_dhw_crb_2790x1740.gif'>[big]</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_fl_930x580.gif'>Florida</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_hi_930x580.gif'>Hawaii</a>
+|
+<a href='images_current/cur_b05kmnn_dhw_gbr_930x580.gif'>GBR</a>
+</font></b></nobr>
+</td>
+</tr>
+<tr>
+<td>
+<font size="2" color="black" face="verdana,arial">
+<b><nobr>Animations (30d):&nbsp;</nobr></b>
+</font>
+</td>
+<td>
+<nobr><b><font size="2" color="darkblue" face="verdana,arial">
+<a href='animation_current/dhw_animation_30day_45ns.gif'>45ns</a>
+|
+<a href='animation_current/dhw_animation_30day_large.gif'>Global</a>
+|
+<a href='animation_current/dhw_animation_30day_east.gif'>East</a>
+|
+<a href='animation_current/dhw_animation_30day_west.gif'>West</a>
+|
+<a href='animation_current/dhw_animation_30day_pacific_930x580.gif'>Pac.</a>
+|
+<a href='animation_current/dhw_animation_30day_indian_930x580.gif'>Ind.</a>
+|
+<a href='animation_current/dhw_animation_30day_satlantic_930x580.gif'>S.Atl.</a>
+|
+<a href='animation_current/dhw_animation_30day_coraltriangle.gif'>Coral Triangle</a>
+<font color='white'>[big]</font>
+|
+<a href='animation_current/dhw_animation_30day_crb_930x580.gif'>Caribbean</a>
+<font color='white'>[big]</font>
+|
+<a href='animation_current/dhw_animation_30day_fl_930x580.gif'>Florida</a>
+|
+<a href='animation_current/dhw_animation_30day_hi_930x580.gif'>Hawaii</a>
+|
+<a href='animation_current/dhw_animation_30day_gbr_930x580.gif'>GBR</a>
+</font></b></nobr>
+</td>
+</tr>
+<tr>
+<td>
+<font size="2" color="black" face="verdana,arial">
+<b><nobr>Animations (90d):&nbsp;</nobr></b>
+</font>
+</td>
+<td>
+<nobr><b><font size="2" color="darkblue" face="verdana,arial">
+<a href='animation_current/dhw_animation_90day_45ns.gif'>45ns</a>
+|
+<a href='animation_current/dhw_animation_90day_large.gif'>Global</a>
+|
+<a href='animation_current/dhw_animation_90day_east.gif'>East</a>
+|
+<a href='animation_current/dhw_animation_90day_west.gif'>West</a>
+|
+<a href='animation_current/dhw_animation_90day_pacific_930x580.gif'>Pac.</a>
+|
+<a href='animation_current/dhw_animation_90day_indian_930x580.gif'>Ind.</a>
+|
+<a href='animation_current/dhw_animation_90day_satlantic_930x580.gif'>S.Atl.</a>
+|
+<a href='animation_current/dhw_animation_90day_coraltriangle.gif'>Coral Triangle</a>
+<font color='white'>[big]</font>
+|
+<a href='animation_current/dhw_animation_90day_crb_930x580.gif'>Caribbean</a>
+<font color='white'>[big]</font>
+|
+<a href='animation_current/dhw_animation_90day_fl_930x580.gif'>Florida</a>
+|
+<a href='animation_current/dhw_animation_90day_hi_930x580.gif'>Hawaii</a>
+|
+<a href='animation_current/dhw_animation_90day_gbr_930x580.gif'>GBR</a>
+</font></b></nobr>
+</td>
+</tr>
+</table>
+
+<table width='900'>
+<tr>
+<td width="25%" align='right'><font size="2" color="black" face="verdana,arial"><b>Year-to-date Maximum:</b></font></td>
+<td width="25%" align='center'><button type="button" onClick="location='./index_5km_baa_max_yeartodate.php';">Alert Area</button></td>
+<td width="10%" align='center'><button type="button" onClick="location='./index_5km_hs_max_yeartodate.php';">HotSpot</button></td>
+<td width="8%"  align='center'><button type="button" onClick="location='./index_5km_dhw_max_yeartodate.php';">DHW</button></td>
+<td width="8%"  align='center'><button type="button" onClick="location='./index_5km_sst_max_yeartodate.php';">SST</button></td>
+<td width="12%" align='center'><button type="button" onClick="location='./index_5km_ssta_max_yeartodate.php';">Anomaly</button></td>
+<td width="12%" align='center'>-----</td>
+</tr>
+<tr>
+<td align='right'><font size="2" color="black" face="verdana,arial"><b>Year-to-date Minimum:</b></font></td>
+<td align='center'>-----</td>
+<td align='center'>-----</td>
+<td align='center'>-----</td>
+<td align='center'><button type="button" onClick="location='./index_5km_sst_min_yeartodate.php';">SST</button></td>
+<td align='center'><button type="button" onClick="location='./index_5km_ssta_min_yeartodate.php';">Anomaly</button></td>
+<td align='center'>-----</td>
+</tr>
+<tr>
+<td align='right'><font size="2" color="black" face="verdana,arial"><b>Year-to-date Mean:</b></font></td>
+<td align='center'>-----</td>
+<td align='center'>-----</td>
+<td align='center'>-----</td>
+<td align='center'><button type="button" onClick="location='./index_5km_sst_mean_yeartodate.php';">SST</button></td>
+<td align='center'><button type="button" onClick="location='./index_5km_ssta_mean_yeartodate.php';">Anomaly</button></td>
+<td align='center'>-----</td>
+</tr>
+</table>
+
+<p align='right'>
+<b><i><font size='2'>
+<font color='red'>Click on map to zoom to small-size 60 x 40-degree tiles; use drop-down menu below to view larger-size 60 x 40-degree tiles.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+<br>
+<font size='2' color='green'><b><i>Right-click outside clickable map area to save the image.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+</font></i></b>
+</p>
+
+<hr width='95%' size='3'>
+
+<font size="2" color="black" face="verdana,arial">
+<nobr>
+<form name="menu_region_tile">
+<b>Large <a href='description_tile_60x40degree.php'>60 x 40-degree tiles</a> (by hemisphere, updated daily):</b>&nbsp;&nbsp;
+<select name="region">
+<option value="enw">N. Hemi./E. Hemi. - West</option>
+<option value="enc">N. Hemi./E. Hemi. - Center</option>
+<option value="ene">N. Hemi./E. Hemi. - East</option>
+<option value="wnw">N. Hemi./W. Hemi. - West</option>
+<option value="wnc">N. Hemi./W. Hemi. - Center</option>
+<option value="wne">N. Hemi./W. Hemi. - East</option>
+<option value="esw">S. Hemi./E. Hemi. - West</option>
+<option value="esc">S. Hemi./E. Hemi. - Center</option>
+<option value="ese">S. Hemi./E. Hemi. - East</option>
+<option value="wsw">S. Hemi./W. Hemi. - West</option>
+<option value="wsc">S. Hemi./W. Hemi. - Center</option>
+<option value="wse">S. Hemi./W. Hemi. - East</option>
+</select>
+<input type="button"
+onClick="location='images_current/cur_b05kmnn_dhw_'+
+document.menu_region_tile.region.options[document.menu_region_tile.region.selectedIndex].value+
+'_2160x1620.gif';" value="View">
+</input>
+</form>
+</nobr>
+</font>
+
+<hr width='30%' size='3'>
+
+<p>
+<button type="button" onClick="location='/vs/map.php';"><font color="blue"><b>Google Maps Interface - Current Data</b></font></button>
+<button type="button" onClick="location='/satellite/ge/index.php';"><font color="blue"><b>Google Earth Interface - Current Data</b></font></button>
+<p>
+<hr width='95%' size='3'>
+<p>
+<button type="button" onClick="location='./index.php';"><font color='red'><b>Go to 5-km Product Suite
+<font size='1' color='black'>(all archived daily and composite data and images, Virtual Stations, and more)</font></b></font></button>
+<p>
+
+<hr width='95%' size='3'>
+<table>
+<tr>
+<td>
+<p class="justified-paragraph">
+<font size="2" color="black" face="verdana,arial">
+The NOAA Coral Reef Watch (CRW) daily 5-km satellite coral bleaching Degree
+Heating Week (DHW) product presented here shows accumulated heat stress, which can lead to coral bleaching and death.
+The scale goes from 0 to 20 &deg;C-weeks. The DHW product accumulates the instantaneous bleaching heat stress 
+(measured by Coral Bleaching HotSpots) during the most-recent
+12-week period. It is directly related to the timing and intensity of coral bleaching. Significant
+coral bleaching usually occurs when DHW values reach 4 &deg;C-weeks. By the time DHW
+values reach 8 &deg;C-weeks, widespread bleaching is likely and significant mortality can
+be expected.
+<br><br>
+This product is updated each afternoon at about 13:30 U.S. Eastern Time.
+</font></p>
+</td></tr></table>
+
+</div>
+
+<p>
+
+<!- ------------------------ Map navigation section: ---------------------------->
+
+<map name='indexmap'>
+<area SHAPE='RECT' COORDS='23,60,121,170'    HREF='./images_current/cur_b05kmnn_dhw_enw.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='122,60,269,170'   HREF='./images_current/cur_b05kmnn_dhw_enc.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='270,60,416,170'  HREF='./images_current/cur_b05kmnn_dhw_ene.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='417,60,562,170'  HREF='./images_current/cur_b05kmnn_dhw_wnw.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='563,60,710,170'  HREF='./images_current/cur_b05kmnn_dhw_wnc.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='711,60,858,170'  HREF='./images_current/cur_b05kmnn_dhw_wne.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='859,60,908,170'  HREF='./images_current/cur_b05kmnn_dhw_enw.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='23,171,121,280'   HREF='./images_current/cur_b05kmnn_dhw_esw.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='122,171,269,280'  HREF='./images_current/cur_b05kmnn_dhw_esc.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='270,171,416,280' HREF='./images_current/cur_b05kmnn_dhw_ese.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='417,171,562,280' HREF='./images_current/cur_b05kmnn_dhw_wsw.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='563,171,710,280' HREF='./images_current/cur_b05kmnn_dhw_wsc.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='711,171,858,280' HREF='./images_current/cur_b05kmnn_dhw_wse.gif'
+ALT='Regional chart' TARGET='_top'>
+<area SHAPE='RECT' COORDS='859,171,908,280' HREF='./images_current/cur_b05kmnn_dhw_esw.gif'
+ALT='Regional chart' TARGET='_top'>
+</map>
+
+<!-- Trailer material -->
+
+</font></font></font>
+</div>
+
+
+
+<!-------START OF FOOTER TEXT FROM INCLUDE STATEMENT-------------------------------------->
+<!-------DO NOT MODIFY THIS SECTION------------------------------------------------------->
+
+
+<div id="footer">
+  <a href="http://www.noaa.gov">
+     <img class="footer-left" src="/satellite/icons1/noaalogo.gif"
+     alt="NOAA logo" border="0"></a>
+  <a href="http://www.doc.gov">
+     <img class="footer-right" src="/satellite/icons1/commerce.gif"
+    alt="commerce logo" border="0"></a>
+  <p>
+  <a href="/satellite/docs/recommendations_crw_citation.php">How to cite these products and methods</a>
+  </p>
+  <p>
+  <a href="http://www.star.nesdis.noaa.gov/star/productdisclaimer.php#heartbleed">Heartbleed Notice</a> |
+  <a href="http://www.star.nesdis.noaa.gov/star/productdisclaimer.php">Disclaimer</a> |
+  <a href="http://www.cio.noaa.gov/services_programs/info_quality.html">Information Quality</a> |
+  <a href="http://www.star.nesdis.noaa.gov/star/accessibility.php">Accessibility Policy</a> |
+  <a href="http://www.star.nesdis.noaa.gov/star/privacy.php">Privacy Policy</a> 
+ </p>
+  <p>
+
+<!--        Last modified:  -->
+<!-- #config timefmt="%e %b %Y" --> 
+<!-- #echo var="LAST_MODIFIED" --> 
+<!--   | -->
+
+   <a href="/survey.php">Customer Survey</a>
+   |
+   <a href=
+   "mailto:coralreefwatch@noaa.gov?subject=[Question for Coral Reef Watch]">
+   Contact Us</a>
+   | 
+  Owner: <a href=
+   "http://coralreefwatch.noaa.gov/satellite/">
+   NOAA Coral Reef Watch</a>
+   </p>
+</div>
+</div>
+
+<!-------END OF FOOTER TEXT FROM INCLUDE STATEMENT-------------------------------------->
+
+
+
+</div>
+
+</BODY>
+</HTML>
+
+
