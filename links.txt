@@ -1,0 +1,13 @@
+https://coralreefwatch.noaa.gov/satellite/vs/index.php
+https://coralreefwatch.noaa.gov/satellite/thermal_history/th_stress_frequency.php
+https://www.coris.noaa.gov/search/catalog/main/home.page
+https://www.co2.earth
+
+
+graphs to scrape
+(alert level)
+https://coralreefwatch.noaa.gov/satellite/bleaching5km/index.php
+(degree heeting)
+https://coralreefwatch.noaa.gov/satellite/bleaching5km/index_5km_dhw.php
+(page contains historical gif)
+https://coralreefwatch.noaa.gov/satellite/analyses_guidance/enso_bleaching_97-99_ag_20140507.php
