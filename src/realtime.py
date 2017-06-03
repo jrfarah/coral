@@ -1,4 +1,5 @@
 # written by Joseph Farah on April 21, 2017
+# Last updated June 2nd 2017
 
 # consider adding try/except for pillow
 import PIL.Image
@@ -68,7 +69,7 @@ def count_pixels(im):
 	color = get_pixel_color(im, 225, 95)
 	print convert_RGB_HEX(color)
 	for l in range(length): 
-		for w in range(120,121):
+		for w in range(120,121): # this range is ONLY for testing purposes, will be replaced with "width"
 			pixels += 1
 			color = get_pixel_color(im, l, w)
 			color = convert_RGB_HEX(color)
@@ -125,6 +126,7 @@ def generate_graphs(database_file):
 	alert_1_data_points = []
 	alert_2_data_points = []
 	x_values = []
+	x_values_num = []
 	with open(database_file, "r") as database:
 		data = database.read().splitlines()
 		for d1 in data:
@@ -137,16 +139,23 @@ def generate_graphs(database_file):
 			alert_1_data_points.append(float(element[4]))
 			alert_2_data_points.append(float(element[5]))
 		for t in range(len(no_stress_points)):
-			x_values.append(t)
+			x_values.append(str(dataset[t][0]))
+			x_values_num.append(t)
 
-	fig, ax = plt.subplots()
+	print x_values_num, x_values
+	fig, ax = plt.subplots(1,1)
+	ax.set_axis_bgcolor((0, 0, 0))
 	#plt.ion()
 	# ax.plot(x_values,no_stress_points, color="black", label = 'NO STRESS')
 	print len(x_values), len(watch_data_points), len(warning_data_points), len(alert_1_data_points), len(alert_2_data_points)
-	ax.plot(x_values, watch_data_points, color="blue", label = 'WATCH')
-	ax.plot(x_values, warning_data_points, color="yellow", label = 'WARNING')
-	ax.plot(x_values, alert_1_data_points, color="orange", label = 'ALERT 1')
-	ax.plot(x_values, alert_2_data_points, color="red", label = 'ALERT 2')
+	#ax.set_xticks(x_values_num)
+	#ax.set_xticklabels(x_values_num, x_values)
+	ax.plot(x_values_num, watch_data_points, color="blue", label = 'WATCH')
+	ax.plot(x_values_num, warning_data_points, color="yellow", label = 'WARNING')
+	ax.plot(x_values_num, alert_1_data_points, color="orange", label = 'ALERT 1')
+	ax.plot(x_values_num, alert_2_data_points, color="red", label = 'ALERT 2')
+	plt.xlabel('Days since the first measurement in the dataset {0}'.format(str(dataset[t][0])))
+	plt.ylabel('Percentage of reef at various alert levels')
 	legend = ax.legend(loc='upper right', shadow=True)
 	for label in legend.get_texts():
 		label.set_fontsize('small')
@@ -205,7 +214,8 @@ def ping_noaa():
 
 def program_print(message):
 	global program_ouput
-	program_ouput.insert(INSERT, message+'\n')
+	program_ouput.insert(INSERT, str(message)+'\n')
+	program_ouput.see(END)	
 
 def make_img_from_gif(gif_link):
 	im = PIL.Image.open(gif_link)
@@ -242,7 +252,7 @@ def analyze_historical_images(folder_link):
 	program_print("ANALYZING HISTORICAL DATA ONLY")
 	for root, dirs, files in os.walk(folder_link):
 		for file in files:
-			file_path = os.path.normpath(folder_link+file)
+			file_path = os.path.normpath(folder_link+'\\'+file)
 			program_print(file_path)
 			print file_path
 			imageObject = PIL.Image.open(file_path) #Can be many different formats.
@@ -255,21 +265,21 @@ def ram_save_intro():
     top.title('Welcome')
     Message(top, text='LOADING MAPS, PLEASE BE PATIENT', padx=20, pady=20).pack()
     top.lift(aboveThis=main)
-    top.after(1000, top.destroy)
+    top.after(500, top.destroy)
 
 # smain function running		
 # analyze_images()
 # generate_graphs("C:\Users\jrfar\Documents\python\coral\db\hist.db")
 
 # buttons and menus and crap
-bleaching_database_view = Text(main, bg = "black", fg = "white", insertbackground = "white",tabs = ("1c"), height=10)
+bleaching_database_view = Text(main, bg = "black", fg = "white", insertbackground = "white",tabs = ("1c"))
 bleaching_database_view.grid(row = 2, column = 0, columnspan=2)
 program_ouput = Text(main, bg = "black", fg = "white", insertbackground = "white",tabs = ("1c"))
 program_ouput.grid(row = 4, column = 0, columnspan=2)
 menubar = Menu(main)
 menubar.add_command(label="Quit!", command=main.quit)
 menubar.add_command(label="Get data from the last 30 days!", command=lambda:generate_frames(r"C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\baa-max_animation_30day_45ns.gif", "C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\frames"))
-menubar.add_command(label="Analyze histoical data!", command=lambda:analyze_historical_images(os.path.normpath("C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\frames/")))
+menubar.add_command(label="Analyze historical data!", command=lambda:analyze_historical_images(os.path.normpath(r"C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\frames\\")))
 menubar.add_command(label="Select database file!", command=get_database)
 menubar.add_command(label="Save the current graph!", command=lambda:generate_graphs(r"C:\Users\jrfar\Documents\python\coral\db\realtime.db"))
 Label(main,text = 'REALTIME DATABASE FILE VIEW').grid(row=1, column=0,columnspan=2)
@@ -280,5 +290,5 @@ Button(main,text='Show graph', command=lambda:generate_graphs(r"C:\Users\jrfar\D
 main.config(menu=menubar)
 
 main.after(0,ram_save_intro)
-main.after(1000, startup_function)
+main.after(500, startup_function)
 main.mainloop()
