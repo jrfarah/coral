@@ -69,7 +69,7 @@ def count_pixels(im):
 	color = get_pixel_color(im, 225, 95)
 	print convert_RGB_HEX(color)
 	for l in range(length): 
-		for w in range(120,121): # this range is ONLY for testing purposes, will be replaced with "width"
+		for w in range(width): # this range is ONLY for testing purposes, will be replaced with "width"
 			pixels += 1
 			color = get_pixel_color(im, l, w)
 			color = convert_RGB_HEX(color)
@@ -264,6 +264,10 @@ def ram_save_intro():
     top = Toplevel()
     top.title('Welcome')
     Message(top, text='LOADING MAPS, PLEASE BE PATIENT', padx=20, pady=20).pack()
+    splash = PIL.Image.open('../coralicon.png')
+    top.splash = splash
+    splashobj = ImageTk.PhotoImage(splash)
+    Label(top, image=splashobj).pack()
     top.lift(aboveThis=main)
     top.after(500, top.destroy)
 
@@ -291,4 +295,5 @@ main.config(menu=menubar)
 
 main.after(0,ram_save_intro)
 main.after(500, startup_function)
+main.iconbitmap(default='../coralicon.ico')
 main.mainloop()
