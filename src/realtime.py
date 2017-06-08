@@ -41,7 +41,7 @@ warning_data_points = []
 alert_1_data_points = []
 alert_2_data_points = []
 
-database_file = r"C:\Users\jrfar\Documents\python\coral\db\realtime.db"
+database_file = os.path.normpath(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
 
 main = Tk()
 
@@ -69,26 +69,37 @@ def count_pixels(im):
 	color = get_pixel_color(im, 225, 95)
 	print convert_RGB_HEX(color)
 	for l in range(length): 
-		for w in range(width): # this range is ONLY for testing purposes, will be replaced with "width"
-			pixels += 1
+		for w in range(240,241): # this range is ONLY for testing purposes, will be replaced with "width"
 			color = get_pixel_color(im, l, w)
 			color = convert_RGB_HEX(color)
 			if color == no_stress_color_range:
 				no_stress += 1
+				pixels += 1
+				continue
 			elif color == watch_color_range:
 				watch_color += 1
+				pixels += 1
 				continue
 			elif color ==  warning_color_range:
 				warning_color += 1
+				pixels += 1
+				continue
 			elif color == alert_1_color_range:
 				alert_1_color += 1
+				pixels += 1
+				continue
 			elif color == alert_2_color_range:
 				alert_2_color += 1
+				pixels += 1
+				continue
 			elif color == black_color_range:
 				black += 1
+				pixels += 1
+				continue
 			elif color == land_range:
 				land += 1
-	program_print("PIXEL ANALYSIS SUCCESSFUL. GRAPH CAN BE DISPLAYED.")
+				pixels += 1
+				continue
 	return pixels
 
 def get_percentages(im):
@@ -163,9 +174,9 @@ def generate_graphs(database_file):
 	plt.show()
 
 def analyze_images():
-	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_max_r07d_baa_45ns.gif", "C:\Users\jrfar\Documents\python\coral\db\current_frame.png")
-	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/index_5km_dhw.php", "C:\Users\jrfar\Documents\python\coral\db\current_frame_temp.png")
-	file_path = os.path.normpath("C:\Users\jrfar\Documents\python\coral\db\current_frame.png")
+	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_max_r07d_baa_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")
+	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/index_5km_dhw.php", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png")
+	file_path = os.path.normpath("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")
 	imageObject = PIL.Image.open(file_path) #Can be many different formats.
 
 	get_percentages(imageObject)
@@ -173,7 +184,7 @@ def analyze_images():
 
 def download_current_image(url_link, path_to_save):
 	urllib.urlretrieve(url_link, path_to_save)
-	print 'Image retrieved'
+	program_print('Image retrieved')
 
 def get_database():
 	global database_file
@@ -193,7 +204,7 @@ def startup_function():
 		info_tmp = info.read()
 		program_ouput.insert(INSERT, info_tmp)	
 	
-	im = PIL.Image.open("C:\Users\jrfar\Documents\python\coral\db\current_frame.png")#.convert2byte()
+	im = PIL.Image.open("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")#.convert2byte()
 	MAP = ImageTk.PhotoImage(im)
 	program_ouput.insert(INSERT, 'MAP CONVERTED TO PNG\n')
 	map_display = Label(main, image=MAP)
@@ -201,8 +212,8 @@ def startup_function():
 	map_display.grid(row=2,column=3, columnspan=2)
 	program_ouput.insert(INSERT, 'MAP SUCCESSFULLY DISPLAYED\n')
 
-	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_sst_45ns.gif", "C:\Users\jrfar\Documents\python\coral\db\current_frame_temp.png")
-	im_temp = PIL.Image.open("C:\Users\jrfar\Documents\python\coral\db\current_frame_temp.png")#.convert2byte()
+	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_sst_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png")
+	im_temp = PIL.Image.open("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png")#.convert2byte()
 	im_temp = im_temp.resize((930, 340), PIL.Image.ANTIALIAS)
 	MAP_temp = ImageTk.PhotoImage(im_temp)
 	map_display_temp = Label(main, image=MAP_temp)
@@ -214,7 +225,8 @@ def ping_noaa():
 
 def program_print(message):
 	global program_ouput
-	program_ouput.insert(INSERT, str(message)+'\n')
+	program_ouput.see(END)
+	program_ouput.insert(END, str(message)+'\n')
 	program_ouput.see(END)	
 
 def make_img_from_gif(gif_link):
@@ -237,16 +249,16 @@ def make_img_from_gif(gif_link):
 def generate_frames(gif_link, img_save_loc):
 	program_print('TRYING TO DELETE /FRAMES/')
 	try:
-		shutil.rmtree(r"C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\frames")
+		shutil.rmtree(r"C:\Users\Joseph Farah\Documents\python\coral\db\gif_frames_bleach\frames")
 	except WindowsError:
 		program_print("FOLDER DOESN'T EXIST, CREATING /FRAMES/")
 		pass 
-	os.makedirs(r"C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\frames")
+	os.makedirs(r"C:\Users\Joseph Farah\Documents\python\coral\db\gif_frames_bleach\frames")
 	for i, frame in enumerate(make_img_from_gif(gif_link)):
-		if i >= 0 and i <=10:
+		if i >= 0 and i <=10 or i>38:
 			continue
-		frame.save(r'C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\frames\test%d.png' % i,**frame.info)
-	program_print('HISTORICAL FRAMES CREATED, LAST 30 DAYS PREPARED FOR PIXEL ANALYSIS')	
+		frame.save(r"C:\Users\Joseph Farah\Documents\python\coral\db\gif_frames_bleach\frames\test%d.png" % i,**frame.info)
+	program_print('FRAMES CREATED. HISTORICAL DATA READY FOR PIXEL ANALYSIS')
 
 def analyze_historical_images(folder_link):
 	program_print("ANALYZING HISTORICAL DATA ONLY")
@@ -258,19 +270,19 @@ def analyze_historical_images(folder_link):
 			imageObject = PIL.Image.open(file_path) #Can be many different formats.
 			get_percentages(imageObject)
 	program_print("HISTORICAL ANALYSIS COMPLETE")
+	program_print("PIXEL ANALYSIS SUCCESSFUL. GRAPH CAN BE DISPLAYED.")
 
 
 def ram_save_intro():
     top = Toplevel()
     top.title('Welcome')
     Message(top, text='LOADING MAPS, PLEASE BE PATIENT', padx=20, pady=20).pack()
-    splash = PIL.Image.open('../coralicon.png')
-    top.splash = splash
-    splashobj = ImageTk.PhotoImage(splash)
-    Label(top, image=splashobj).pack()
+    # splash = PIL.Image.open('../coralicon.png')
+    # top.splash = splash
+    # splashobj = ImageTk.PhotoImage(splash)
+    # Label(top, image=splashobj).pack()
     top.lift(aboveThis=main)
     top.after(500, top.destroy)
-
 # smain function running		
 # analyze_images()
 # generate_graphs("C:\Users\jrfar\Documents\python\coral\db\hist.db")
@@ -278,21 +290,20 @@ def ram_save_intro():
 # buttons and menus and crap
 bleaching_database_view = Text(main, bg = "black", fg = "white", insertbackground = "white",tabs = ("1c"))
 bleaching_database_view.grid(row = 2, column = 0, columnspan=2)
-program_ouput = Text(main, bg = "black", fg = "white", insertbackground = "white",tabs = ("1c"))
+program_ouput = Text(main, bg = "black", fg = "white", insertbackground = "white",tabs = ("1c"), height=18)
 program_ouput.grid(row = 4, column = 0, columnspan=2)
 menubar = Menu(main)
 menubar.add_command(label="Quit!", command=main.quit)
-menubar.add_command(label="Get data from the last 30 days!", command=lambda:generate_frames(r"C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\baa-max_animation_30day_45ns.gif", "C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\frames"))
-menubar.add_command(label="Analyze historical data!", command=lambda:analyze_historical_images(os.path.normpath(r"C:\Users\jrfar\Documents\python\coral\db\gif_frames_bleach\frames\\")))
+menubar.add_command(label="Get data from the last 30 days!", command=lambda:generate_frames(r"C:\Users\Joseph Farah\Documents\python\coral\db\gif_frames_bleach\baa-max_animation_30day_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\gif_frames_bleach\frames"))
+menubar.add_command(label="Analyze historical data!", command=lambda:analyze_historical_images(os.path.normpath(r"C:\Users\Joseph Farah\Documents\python\coral\db\gif_frames_bleach\frames\\")))
 menubar.add_command(label="Select database file!", command=get_database)
-menubar.add_command(label="Save the current graph!", command=lambda:generate_graphs(r"C:\Users\jrfar\Documents\python\coral\db\realtime.db"))
+menubar.add_command(label="Save the current graph!", command=lambda:generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db"))
 Label(main,text = 'REALTIME DATABASE FILE VIEW').grid(row=1, column=0,columnspan=2)
 Label(main,text = 'PROGRAM OUTPUT').grid(row=3, column=0,columnspan=2)
 Button(main,text='Get percentages!', command=lambda:analyze_images()).grid(row = 0, column=1)
-Button(main,text='Show graph', command=lambda:generate_graphs(r"C:\Users\jrfar\Documents\python\coral\db\realtime.db")).grid(row = 0, column=0)
+Button(main,text='Show graph', command=lambda:generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")).grid(row = 0, column=0)
 
 main.config(menu=menubar)
-
 main.after(0,ram_save_intro)
 main.after(500, startup_function)
 main.iconbitmap(default='../coralicon.ico')
