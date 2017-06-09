@@ -15,6 +15,7 @@ import tkMessageBox as tkmb
 # scrap that its necessary for both, im an idiot
 import shutil
 import urllib
+import sys
 
 # count vars, global 
 no_stress_color_range = '#ffffff'
@@ -42,6 +43,8 @@ alert_1_data_points = []
 alert_2_data_points = []
 
 database_file = os.path.normpath(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
+
+unknown_arg = ''
 
 main = Tk()
 
@@ -197,6 +200,7 @@ def save_graph():
 	print 'test'
 
 def startup_function():
+	global unknown_arg
 	with open(database_file, "r") as database:
 		bleaching_database_view.delete('1.0', END)
 		info_tmp = database.read()
@@ -222,6 +226,9 @@ def startup_function():
 	map_display_temp = Label(main, image=MAP_temp)
 	map_display_temp.image = MAP_temp # keep a reference!
 	map_display_temp.grid(row=4,column=3, columnspan=2)
+	program_print('')
+	unknown_arg_text = 'UNKNOWN ARGUMENT SUPPLIED BY USER ' + str(unknown_arg)
+	program_print(unknown_arg_text)
 
 def ping_noaa():
 	os.system("ping ")
@@ -282,15 +289,28 @@ def analyze_historical_images(folder_link):
 
 
 def ram_save_intro():
-    top = Toplevel()
-    top.title('Welcome')
-    Message(top, text='LOADING MAPS, PLEASE BE PATIENT', padx=20, pady=20).pack()
+	global unknown_arg
+	if sys.argv:
+		args = list(sys.argv)
+		if args[1] == '--v' or args[1] == '-version':
+			print 'v0.5.26'
+			sys.exit()
+		if args[1] == '--g' or args[1] == '-graph':
+			generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
+			sys.exit()
+		if args[1] == '--d' or args[1] == '-databases':
+			print database_file
+			sys.exit()
+		unknown_arg = args[1]
+	top = Toplevel()
+	top.title('Welcome')
+	Message(top, text='LOADING MAPS, PLEASE BE PATIENT', padx=20, pady=20).pack()
     # splash = PIL.Image.open('../coralicon.png')
     # top.splash = splash
     # splashobj = ImageTk.PhotoImage(splash)
     # Label(top, image=splashobj).pack()
-    top.lift(aboveThis=main)
-    top.after(500, top.destroy)
+	top.lift(aboveThis=main)
+	top.after(500, top.destroy)
 # smain function running		
 # analyze_images()
 # generate_graphs("C:\Users\jrfar\Documents\python\coral\db\hist.db")
