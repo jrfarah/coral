@@ -18,7 +18,7 @@ import urllib
 
 # count vars, global 
 no_stress_color_range = '#ffffff'
-watch_color_range = '#c8ff32'
+watch_color_range = '#fff000'
 warning_color_range = "#faaa0a"
 alert_1_color_range = "#f00000"
 alert_2_color_range = "#960000"
@@ -69,7 +69,7 @@ def count_pixels(im):
 	color = get_pixel_color(im, 225, 95)
 	print convert_RGB_HEX(color)
 	for l in range(length): 
-		for w in range(240,241): # this range is ONLY for testing purposes, will be replaced with "width"
+		for w in range(181,182): # this range is ONLY for testing purposes, will be replaced with "width"
 			color = get_pixel_color(im, l, w)
 			color = convert_RGB_HEX(color)
 			if color == no_stress_color_range:
@@ -102,7 +102,7 @@ def count_pixels(im):
 				continue
 	return pixels
 
-def get_percentages(im):
+def get_percentages(im, num):
 	global no_stress_color_range, watch_color_range, warning_color_range, alert_1_color_range, alert_2_color_range, no_stress, watch_color, warning_color, alert_1_color, alert_2_color, black_color_range, black, land_range, land, database_file, bleaching_database_view
 	no_stress, watch_color, warning_color, alert_1_color, alert_2_color = 0,0,0,0,0
 	pixels  = float(count_pixels(im))
@@ -112,6 +112,8 @@ def get_percentages(im):
 	st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 	program_print("GETTING PERCENTAGES")
 	program_print("GETTING DATE TIME")
+	st = get_date(datetime.date.today(), 19+(27-int(num)))
+	print st, num
 	program_print(ts)
 	database_input_list = [st, no_stress/pixels, watch_color/pixels, warning_color/pixels, alert_1_color/pixels, alert_2_color/pixels]
 	for element in database_input_list:
@@ -161,11 +163,11 @@ def generate_graphs(database_file):
 	print len(x_values), len(watch_data_points), len(warning_data_points), len(alert_1_data_points), len(alert_2_data_points)
 	#ax.set_xticks(x_values_num)
 	#ax.set_xticklabels(x_values_num, x_values)
-	ax.plot(x_values_num, watch_data_points, color="blue", label = 'WATCH')
-	ax.plot(x_values_num, warning_data_points, color="yellow", label = 'WARNING')
-	ax.plot(x_values_num, alert_1_data_points, color="orange", label = 'ALERT 1')
-	ax.plot(x_values_num, alert_2_data_points, color="red", label = 'ALERT 2')
-	plt.xlabel('Days since the first measurement in the dataset {0}'.format(str(dataset[t][0])))
+	ax.plot(x_values_num, watch_data_points, color="yellow", label = 'WATCH')
+	ax.plot(x_values_num, warning_data_points, color="orange", label = 'WARNING')
+	ax.plot(x_values_num, alert_1_data_points, color="red", label = 'ALERT 1')
+	ax.plot(x_values_num, alert_2_data_points, color="maroon", label = 'ALERT 2')
+	plt.xlabel('Days since the first measurement in the dataset {0}'.format(str(dataset[0][0])))
 	plt.ylabel('Percentage of reef at various alert levels')
 	legend = ax.legend(loc='upper right', shadow=True)
 	for label in legend.get_texts():
@@ -204,6 +206,7 @@ def startup_function():
 		info_tmp = info.read()
 		program_ouput.insert(INSERT, info_tmp)	
 	
+	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_max_r07d_baa_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")
 	im = PIL.Image.open("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")#.convert2byte()
 	MAP = ImageTk.PhotoImage(im)
 	program_ouput.insert(INSERT, 'MAP CONVERTED TO PNG\n')
@@ -222,6 +225,10 @@ def startup_function():
 
 def ping_noaa():
 	os.system("ping ")
+
+def get_date(start, delta):
+	newdate = start + datetime.timedelta(-delta)
+	return str(newdate)
 
 def program_print(message):
 	global program_ouput
@@ -268,7 +275,8 @@ def analyze_historical_images(folder_link):
 			program_print(file_path)
 			print file_path
 			imageObject = PIL.Image.open(file_path) #Can be many different formats.
-			get_percentages(imageObject)
+			tmp_num = file.strip('.png').strip('test')
+			get_percentages(imageObject, tmp_num)
 	program_print("HISTORICAL ANALYSIS COMPLETE")
 	program_print("PIXEL ANALYSIS SUCCESSFUL. GRAPH CAN BE DISPLAYED.")
 
@@ -307,4 +315,8 @@ main.config(menu=menubar)
 main.after(0,ram_save_intro)
 main.after(500, startup_function)
 main.iconbitmap(default='../coralicon.ico')
+# main.attributes('-fullscreen', True)
+# w, h = main.winfo_screenwidth(), main.winfo_screenheight()
+# main.geometry("%dx%d+0+0" % (w, h))
+main.state('zoomed')
 main.mainloop()
