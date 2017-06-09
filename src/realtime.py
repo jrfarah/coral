@@ -1,5 +1,5 @@
 # written by Joseph Farah on April 21, 2017
-# Last updated June 2nd 2017
+# Last updated June 8th 2017
 
 # consider adding try/except for pillow
 import PIL.Image
