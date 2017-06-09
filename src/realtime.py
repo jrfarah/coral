@@ -293,7 +293,7 @@ def ram_save_intro():
 	if sys.argv:
 		args = list(sys.argv)
 		if args[1] == '--v' or args[1] == '-version':
-			print 'v0.5.26'
+			print 'v0.5.28'
 			sys.exit()
 		if args[1] == '--g' or args[1] == '-graph':
 			generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
