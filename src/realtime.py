@@ -357,31 +357,50 @@ def show_forecast():
 def depict_ph_increase(x,y,color, imobject):
 	program_print(color)
 	draw = PIL.ImageDraw.Draw(imobject)
-	draw.text((x, y),color,(255,255,255))
+	draw.text((x, y),"<--"+str(ph_change(color))+' [H+]',(255,255,255))
 	imobject.save('tmp-out.gif')
 	im_temp = PIL.Image.open("tmp-out.gif")#.convert2byte()
-	im_temp = im_temp.resize((930, 340), PIL.Image.ANTIALIAS)
+	im_temp = im_temp.resize((930, 340))
 	MAP_temp = ImageTk.PhotoImage(im_temp)
 	map_display_temp = Label(main, image=MAP_temp)
 	map_display_temp.image = MAP_temp # keep a reference!
 	map_display_temp.grid(row=4,column=2, columnspan=3)
 
 def read_temp_pixels(temperature_file, rngup, rngdown):
-	temp_image_object = PIL.Image.open(temperature_file)
+	temp_image_object = PIL.Image.open(temperature_file).convert('RGB')
+	#tempdrawimage(temp_image_object)
 	(length, width) = get_image_size(temp_image_object)
 	(rngxleft, rngxright) = rngup
 	(rngyup,rngydown) = rngdown
 	print 'the length and width is'
 	print length, width
-	hotspots = 5;
+	hotspots = 30;
 	for hotspot in range(0,hotspots):
 		color = "#ffffff"
 		while color == "#ffffff" or color == "#000000" or color == "#505050" or color == "#969696":
 			yc = random.randint(rngxleft, rngxright)
 			xc = random.randint(rngyup,rngydown)
-			color = convert_RGB_HEX(get_pixel_color(temp_image_object, xc, yc))
+			color = convert_RGB_HEX(get_pixel_color(PIL.Image.open(temperature_file), xc, yc))
 		depict_ph_increase(xc,yc,color, temp_image_object)
 
+def tempdrawimage(imobject):
+
+	im_temp = imobject
+	im_temp = im_temp.resize((930, 340), PIL.Image.ANTIALIAS)
+	MAP_temp = ImageTk.PhotoImage(im_temp)
+	map_display_temp = Label(main, image=MAP_temp)
+	map_display_temp.image = MAP_temp # keep a reference!
+	map_display_temp.grid(row=4,column=2, columnspan=3)
+
+def ph_change(c):
+	tempnumdist = [-2,0,5,10,15,20,25,30,35]
+	tempdist = [negativetwo,zero,five,ten,fifteen,twenty,twentyfive,thirty,thirtyfive]
+	for temperature in tempdist:
+		activetemp = temperature
+		if c <= activetemp and c > tempdist[tempdist.index(temperature)-1]:
+			break
+	program_print(activetemp)
+	return 7.95+0.0114*tempnumdist[tempdist.index(activetemp)]
 
 
 
@@ -405,10 +424,10 @@ menubar.add_command(label="Get data from the last 30 days!", command=lambda:gene
 menubar.add_command(label="Analyze historical data!", command=lambda:analyze_historical_images(os.path.normpath(r"C:\Users\Joseph Farah\Documents\python\coral\db\gif_frames_bleach\frames\\")))
 menubar.add_command(label="Select database file!", command=get_database)
 menubar.add_command(label="Save the current graph!", command=lambda:generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db"))
-menubar.add_command(label="Map pH change!", command=lambda:read_temp_pixels(r"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png"))
+menubar.add_command(label="Map pH change!", command=lambda:read_temp_pixels(r"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png",(40,240),(100,810)))
 
 ph = Menu(menubar, tearoff=0)
-ph.add_command(label="Atlantic Ocean Top", command=lambda:read_temp_pixels("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png",(68,132),(710,810) ))
+ph.add_command(label="Atlantic Ocean Top", command=lambda:read_temp_pixels(r"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png",(68,132),(710,810) ))
 ph.add_command(label="Save", command=main.quit)
 ph.add_separator()
 ph.add_command(label="Exit", command=main.quit)
