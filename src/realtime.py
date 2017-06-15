@@ -3,8 +3,10 @@
 
 # consider adding try/except for pillow
 import PIL.Image
+from PIL import ImageDraw 
 from PIL import ImageTk
 import os
+import random
 import datetime
 import time
 import matplotlib.pyplot as plt
@@ -25,6 +27,17 @@ alert_1_color_range = "#f00000"
 alert_2_color_range = "#960000"
 black_color_range = "#000000"
 land_range = "#c8c8c8"
+
+# temp colors
+negativetwo = "#500014"
+zero = "#500046"
+five = "#280096"
+ten = "#000096"
+fifteen = "#0075ff"
+twenty = "#00fc00"
+twentyfive = "#e6fa00"
+thirty = "#e6fa00"
+thirtyfive = "#730000"
 
 no_stress = 0.0
 watch_color = 0.0
@@ -216,7 +229,7 @@ def startup_function():
 	program_ouput.insert(INSERT, 'MAP CONVERTED TO PNG\n')
 	map_display = Label(main, image=MAP)
 	map_display.image = MAP # keep a reference!
-	map_display.grid(row=2,column=3, columnspan=2)
+	map_display.grid(row=2,column=2, columnspan=3)
 	program_ouput.insert(INSERT, 'MAP SUCCESSFULLY DISPLAYED\n')
 
 	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_sst_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png")
@@ -225,7 +238,7 @@ def startup_function():
 	MAP_temp = ImageTk.PhotoImage(im_temp)
 	map_display_temp = Label(main, image=MAP_temp)
 	map_display_temp.image = MAP_temp # keep a reference!
-	map_display_temp.grid(row=4,column=3, columnspan=2)
+	map_display_temp.grid(row=4,column=2, columnspan=3)
 	program_print('')
 	unknown_arg_text = 'UNKNOWN ARGUMENT SUPPLIED BY USER ' + str(unknown_arg)
 	program_print(unknown_arg_text)
@@ -293,7 +306,7 @@ def ram_save_intro():
 	if sys.argv:
 		args = list(sys.argv)
 		if args[1] == '--v' or args[1] == '-version':
-			print 'v0.5.28'
+			print 'v0.5.29'
 			sys.exit()
 		if args[1] == '--g' or args[1] == '-graph':
 			generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
@@ -311,6 +324,72 @@ def ram_save_intro():
     # Label(top, image=splashobj).pack()
 	top.lift(aboveThis=main)
 	top.after(500, top.destroy)
+
+def show_daily_change():
+	im = PIL.Image.open("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")#.convert2byte()
+	MAP = ImageTk.PhotoImage(im)
+	program_ouput.insert(INSERT, 'REALTIME MAP CONVERTED TO PNG\n')
+	map_display = Label(main, image=MAP)
+	map_display.image = MAP # keep a reference!
+	map_display.grid(row=2,column=2, columnspan=3)
+	program_ouput.insert(INSERT, 'REALTIME CHANGE MAP SUCCESSFULLY DISPLAYED\n')
+
+def show_cumulative():
+	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current_composite/cur_b05kmnn_baa_max_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_cumulative.png")
+	im = PIL.Image.open("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_cumulative.png")#.convert2byte()
+	MAP = ImageTk.PhotoImage(im)
+	program_ouput.insert(INSERT, 'CUMULATIVE MAP CONVERTED TO PNG\n')
+	map_display = Label(main, image=MAP)
+	map_display.image = MAP # keep a reference!
+	map_display.grid(row=2,column=2, columnspan=3)
+	program_ouput.insert(INSERT, 'CUMULATIVE MAP SUCCESSFULLY DISPLAYED\n')
+
+def show_forecast():
+	download_current_image('https://coralreefwatch.noaa.gov/satellite/bleachingoutlook_cfs/current_images/cur_cfsv2_prob-4mon_v4_alertlevel1_45ns.gif', "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_forecast.png")
+	im = PIL.Image.open("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_forecast.png")#.convert2byte()
+	MAP = ImageTk.PhotoImage(im)
+	program_ouput.insert(INSERT, 'CUMULATIVE MAP CONVERTED TO PNG\n')
+	map_display = Label(main, image=MAP)
+	map_display.image = MAP # keep a reference!
+	map_display.grid(row=2,column=2, columnspan=3)
+	program_ouput.insert(INSERT, 'FORECAST MAP SUCCESSFULLY DISPLAYED\n')
+
+def depict_ph_increase(x,y,color, imobject):
+	program_print(color)
+	draw = PIL.ImageDraw.Draw(imobject)
+	draw.text((x, y),color,(255,255,255))
+	imobject.save('tmp-out.gif')
+	im_temp = PIL.Image.open("tmp-out.gif")#.convert2byte()
+	im_temp = im_temp.resize((930, 340), PIL.Image.ANTIALIAS)
+	MAP_temp = ImageTk.PhotoImage(im_temp)
+	map_display_temp = Label(main, image=MAP_temp)
+	map_display_temp.image = MAP_temp # keep a reference!
+	map_display_temp.grid(row=4,column=2, columnspan=3)
+
+def read_temp_pixels(temperature_file, rngup, rngdown):
+	temp_image_object = PIL.Image.open(temperature_file)
+	(length, width) = get_image_size(temp_image_object)
+	(rngxleft, rngxright) = rngup
+	(rngyup,rngydown) = rngdown
+	print 'the length and width is'
+	print length, width
+	hotspots = 5;
+	for hotspot in range(0,hotspots):
+		color = "#ffffff"
+		while color == "#ffffff" or color == "#000000" or color == "#505050" or color == "#969696":
+			yc = random.randint(rngxleft, rngxright)
+			xc = random.randint(rngyup,rngydown)
+			color = convert_RGB_HEX(get_pixel_color(temp_image_object, xc, yc))
+		depict_ph_increase(xc,yc,color, temp_image_object)
+
+
+
+
+
+# THE FUNCTION STOPS HERE. HERE BE DRAGONS
+
+
+
 # smain function running		
 # analyze_images()
 # generate_graphs("C:\Users\jrfar\Documents\python\coral\db\hist.db")
@@ -326,11 +405,22 @@ menubar.add_command(label="Get data from the last 30 days!", command=lambda:gene
 menubar.add_command(label="Analyze historical data!", command=lambda:analyze_historical_images(os.path.normpath(r"C:\Users\Joseph Farah\Documents\python\coral\db\gif_frames_bleach\frames\\")))
 menubar.add_command(label="Select database file!", command=get_database)
 menubar.add_command(label="Save the current graph!", command=lambda:generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db"))
+menubar.add_command(label="Map pH change!", command=lambda:read_temp_pixels(r"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png"))
+
+ph = Menu(menubar, tearoff=0)
+ph.add_command(label="Atlantic Ocean Top", command=lambda:read_temp_pixels("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png",(68,132),(710,810) ))
+ph.add_command(label="Save", command=main.quit)
+ph.add_separator()
+ph.add_command(label="Exit", command=main.quit)
+menubar.add_cascade(label="pH Mapping", menu=ph)
+
 Label(main,text = 'REALTIME DATABASE FILE VIEW').grid(row=1, column=0,columnspan=2)
 Label(main,text = 'PROGRAM OUTPUT').grid(row=3, column=0,columnspan=2)
 Button(main,text='Get percentages!', command=lambda:analyze_images()).grid(row = 0, column=1)
 Button(main,text='Show graph', command=lambda:generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")).grid(row = 0, column=0)
-
+Button(main, text = 'Show daily change map/Refresh daily change map', command=show_daily_change).grid(row = 0,column = 2)
+Button(main, text = 'Show cumulative reef stress (all datasets)', command=show_cumulative).grid(row = 0,column = 3)
+Button(main, text = 'Show reef stress forecast (all datasets)', command=show_forecast).grid(row = 0,column = 4)
 main.config(menu=menubar)
 main.after(0,ram_save_intro)
 main.after(500, startup_function)
