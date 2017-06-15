@@ -1,5 +1,11 @@
+##############################################
 # written by Joseph Farah on April 21, 2017
 # Last updated June 8th 2017
+##############################################
+
+##############################################
+#imports
+##############################################
 
 # consider adding try/except for pillow
 import PIL.Image
@@ -19,7 +25,11 @@ import shutil
 import urllib
 import sys
 
+##############################################
 # count vars, global 
+##############################################
+
+# color and temperature ranges
 no_stress_color_range = '#ffffff'
 watch_color_range = '#fff000'
 warning_color_range = "#faaa0a"
@@ -39,6 +49,7 @@ twentyfive = "#e6fa00"
 thirty = "#e6fa00"
 thirtyfive = "#730000"
 
+# count vars for percentages
 no_stress = 0.0
 watch_color = 0.0
 warning_color = 0.0
@@ -47,6 +58,8 @@ alert_2_color = 0.0
 black = 0.0
 land = 0.0
 
+# lists that need predefinition, including x/y datasets, 
+# percentage points, etc
 dataset = []
 x_values = []
 no_stress_points = []
@@ -55,35 +68,53 @@ warning_data_points = []
 alert_1_data_points = []
 alert_2_data_points = []
 
+# database file, will be dynamic so that users can update 
+# with their own data file
 database_file = os.path.normpath(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
 
+# arg variable, will be filled if unknown arg is called
 unknown_arg = ''
 
+# variable for the continuous scan, is used by two
+# functions so must be global and declared before hand
+keepgoing = 0
+
+# defining the tkinter window
 main = Tk()
 
+##############################################
+# FUNCTION DEFINITIONS, ABANDON ALL HOPE HE 
+# WHO ENTERS HERE
+##############################################
 def get_pixel_color(image_object, x,y):
-	# gets the color at a specificed pixel
+	'''gets the color at a specificed pixel
+	arguments: image object (predefined), x and y coordinates of pixel
+	returns: red green and blue, to be converted with convert_RGB_HEX'''
 	rgb_im = image_object.convert('RGB')
 	r, g, b = rgb_im.getpixel((x, y))
 
 	return r,g,b
 
 def get_image_size(image_object):
+	'''gets the size of any of the various image objects'''
 	return image_object.size
 
 def clamp(random_var_name_1):
+	'''needed for the conversion from RGB to HEX'''
   	return max(0, min(random_var_name_1, 255))
 
 def convert_RGB_HEX(color_tuple):
+	'''converts RGB values to HEX. Uses some magic I found on Stack Overflow'''
 	return "#{0:02x}{1:02x}{2:02x}".format(clamp(color_tuple[0]), clamp(color_tuple[1]), clamp(color_tuple[2]))
 
 def count_pixels(im):
+	'''counts pixels in stress map and adds various color counts to various global variables'''
+	# globalizing all needed variables
 	global no_stress_color_range, watch_color_range, warning_color_range, alert_1_color_range, alert_2_color_range, no_stress, watch_color, warning_color, alert_1_color, alert_2_color, black_color_range, black, land_range, land
+	# gets the image length and width, stores as vars within tuple
 	(length, width) = get_image_size(im)
-	print length, width
+	# initiliazes pixels to zero, MUST BE DONE BEFORE USING THE FUNCTION
 	pixels = 0
-	color = get_pixel_color(im, 225, 95)
-	print convert_RGB_HEX(color)
 	for l in range(length): 
 		for w in range(181,182): # this range is ONLY for testing purposes, will be replaced with "width"
 			color = get_pixel_color(im, l, w)
@@ -384,7 +415,6 @@ def read_temp_pixels(temperature_file, rngup, rngdown):
 		depict_ph_increase(xc,yc,color, temp_image_object)
 
 def tempdrawimage(imobject):
-
 	im_temp = imobject
 	im_temp = im_temp.resize((930, 340), PIL.Image.ANTIALIAS)
 	MAP_temp = ImageTk.PhotoImage(im_temp)
@@ -402,10 +432,19 @@ def ph_change(c):
 	program_print(activetemp)
 	return 7.95+0.0114*tempnumdist[tempdist.index(activetemp)]
 
+def continuousscan():
+	global keepgoing
+	keepgoing = 1
+	while keepgoing == 1:
+		read_temp_pixels(r"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png",(40,240),(100,810))
+		main.update()
 
 
+def stopscan():
+	global keepgoing
+	keepgoing = 0
 
-# THE FUNCTION STOPS HERE. HERE BE DRAGONS
+# THE FUNCTIONs STOPS HERE. HERE BE DRAGONS
 
 
 
@@ -428,7 +467,8 @@ menubar.add_command(label="Map pH change!", command=lambda:read_temp_pixels(r"C:
 
 ph = Menu(menubar, tearoff=0)
 ph.add_command(label="Atlantic Ocean Top", command=lambda:read_temp_pixels(r"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png",(68,132),(710,810) ))
-ph.add_command(label="Save", command=main.quit)
+ph.add_command(label="Continuous Scan", command=continuousscan)
+ph.add_command(label="Stop Scan", command=stopscan)
 ph.add_separator()
 ph.add_command(label="Exit", command=main.quit)
 menubar.add_cascade(label="pH Mapping", menu=ph)
