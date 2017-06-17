@@ -115,10 +115,14 @@ def count_pixels(im):
 	(length, width) = get_image_size(im)
 	# initiliazes pixels to zero, MUST BE DONE BEFORE USING THE FUNCTION
 	pixels = 0
-	for l in range(length): 
-		for w in range(181,182): # this range is ONLY for testing purposes, will be replaced with "width"
+	# begins looping through every pixel in the image, checking for color
+	for l in range(length):
+		# this range is ONLY for testing purposes, will be replaced with "width"
+		for w in range(181,182): 
+			# grabs pixel color and converts it
 			color = get_pixel_color(im, l, w)
 			color = convert_RGB_HEX(color)
+			# checks color of pixel against predefined ranges
 			if color == no_stress_color_range:
 				no_stress += 1
 				pixels += 1
@@ -147,37 +151,48 @@ def count_pixels(im):
 				land += 1
 				pixels += 1
 				continue
+	# returns the number of pixels
 	return pixels
 
 def get_percentages(im, num):
+	'''Does the math work of getting the percentages of each pixel color and writing them to the data file'''
+	# globalizing all variables needed
 	global no_stress_color_range, watch_color_range, warning_color_range, alert_1_color_range, alert_2_color_range, no_stress, watch_color, warning_color, alert_1_color, alert_2_color, black_color_range, black, land_range, land, database_file, bleaching_database_view
+	# sets all counter variables to zero in preparation for count_pixels, this MUST BE DONE BEFOREHAND
 	no_stress, watch_color, warning_color, alert_1_color, alert_2_color = 0,0,0,0,0
+	# floats the number of pixels returned so it can be used in the percentage count
 	pixels  = float(count_pixels(im))
-	print pixels, no_stress, watch_color, warning_color, alert_1_color, alert_2_color
-	# the values in the database will go in order of the alert levels, with a timestamp at the beginning delimited by a |
+	# the values in the database will go in order of the alert levels, with a timestamp at the beginning delimited by a | DEPRECATED IGNORE THIS
 	ts = time.time()
 	st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 	program_print("GETTING PERCENTAGES")
 	program_print("GETTING DATE TIME")
+	# gets the date and time that the map was used by examining today's date and the placement of the gif entry in the file
 	st = get_date(datetime.date.today(), 19+(27-int(num)))
-	print st, num
 	program_print(ts)
+	# preps to add everything to the database by sticking it in a list first
 	database_input_list = [st, no_stress/pixels, watch_color/pixels, warning_color/pixels, alert_1_color/pixels, alert_2_color/pixels]
+	# im not even sure what this does, but do i want to risk taking it away?
 	for element in database_input_list:
 		if database_input_list.index(element) == 0:
 			continue
 		database_input_list[database_input_list.index(element)] == element
+	# concatenates each line into a string 
 	database_input = "".join(str(database_input_list))
-	print database_input
+	# opens the database file and sticks it in there
 	with open(os.path.normpath(database_file), "a") as database:
 		database.write(database_input+'\n')	
+		# reads the data back out in preparation for the graph making
 	with open(database_file, "r") as database:
 		bleaching_database_view.delete('1.0', END)
 		info_tmp = database.read()
 		bleaching_database_view.insert(INSERT, info_tmp)
 
 def generate_graphs(database_file):
+	'''generates the graphs at request, using matplotlib, displays changing bleaching patterns over the last 30 days'''
+	# globalizes all necessary variables
 	global dataset, x_values, no_stress, watch_data_points, warning_data_points, alert_1_data_points, alert_2_data_points
+	# initiliazes all the lists that will eventually be used as point holders on the graph
 	data = []
 	dataset = []
 	no_stress_points = []
@@ -187,73 +202,85 @@ def generate_graphs(database_file):
 	alert_2_data_points = []
 	x_values = []
 	x_values_num = []
+	# open the database file and read in the data
 	with open(database_file, "r") as database:
+		# read it into a list, each new line is a new entry
 		data = database.read().splitlines()
 		for d1 in data:
+			# get rid of the brackets and the commas
 			tmp = d1.strip('[]')
 			dataset.append([d.strip() for d in tmp.split(',')])
 		for element in dataset:
+			# append all corresponding points to their home lists
 			no_stress_points.append(float(element[1]))
 			watch_data_points.append(float(element[2]))
 			warning_data_points.append(float(element[3]))
 			alert_1_data_points.append(float(element[4]))
 			alert_2_data_points.append(float(element[5]))
 		for t in range(len(no_stress_points)):
+			# takes the number of days and makes a corresponding x value list for graphing
 			x_values.append(str(dataset[t][0]))
 			x_values_num.append(t)
 
-	print x_values_num, x_values
+	# defins the figure and axes
 	fig, ax = plt.subplots(1,1)
+	# sets the background color
 	ax.set_axis_bgcolor((0, 0, 0))
-	#plt.ion()
-	# ax.plot(x_values,no_stress_points, color="black", label = 'NO STRESS')
-	print len(x_values), len(watch_data_points), len(warning_data_points), len(alert_1_data_points), len(alert_2_data_points)
-	#ax.set_xticks(x_values_num)
-	#ax.set_xticklabels(x_values_num, x_values)
+	# labels and plots all of the various data sets
 	ax.plot(x_values_num, watch_data_points, color="yellow", label = 'WATCH')
 	ax.plot(x_values_num, warning_data_points, color="orange", label = 'WARNING')
 	ax.plot(x_values_num, alert_1_data_points, color="red", label = 'ALERT 1')
 	ax.plot(x_values_num, alert_2_data_points, color="maroon", label = 'ALERT 2')
+	# adds the labels
 	plt.xlabel('Days since the first measurement in the dataset {0}'.format(str(dataset[0][0])))
 	plt.ylabel('Percentage of reef at various alert levels')
+	# creates the legend
 	legend = ax.legend(loc='upper right', shadow=True)
 	for label in legend.get_texts():
 		label.set_fontsize('small')
-
+	#displays the plot
 	plt.show()
 
 def analyze_images():
+	'''downloads images from the NOAA and prepares them using standard ImageObjects for analysis'''
 	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_max_r07d_baa_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")
 	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/index_5km_dhw.php", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png")
 	file_path = os.path.normpath("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")
 	imageObject = PIL.Image.open(file_path) #Can be many different formats.
-
+	# gets the percentages for each entry in the gif (last 30 days, so technically historical)
 	get_percentages(imageObject)
 	tkmb.showinfo("Process Completed","Process complete, GRAPH ready to be GENERATED")	
 
 def download_current_image(url_link, path_to_save):
+	'''function to download image, just makes it overall more readable'''
 	urllib.urlretrieve(url_link, path_to_save)
 	program_print('Image retrieved')
 
 def get_database():
+	'''featureset that is soon to be implemented, will allow user to select their own datafile for use'''
 	global database_file
 	databse_file = selectFILE()
 	tkmb.showinfo("File Selected","DATABASE FILE SELECTED")	
 
 def save_graph():
+	'''test function'''
 	print 'test'
 
 def startup_function():
+	'''the functiont that has to run as soon as the program starts up. loads all images, quickly loads databases for later reading, and displays some startup text to the user'''
 	global unknown_arg
+	# opens and loads the database file into the corresponding tkinter window
 	with open(database_file, "r") as database:
 		bleaching_database_view.delete('1.0', END)
 		info_tmp = database.read()
 		bleaching_database_view.insert(INSERT, info_tmp)	
+	# opens and loads startup text file into the corresponding tkinter window
 	with open("startuptext.txt", "r") as info:
 		program_ouput.delete('1.0', END)
 		info_tmp = info.read()
 		program_ouput.insert(INSERT, info_tmp)	
 	
+	# downloads current relevant bleaching and temperature data and displays them on the right half of the prpogram window
 	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_max_r07d_baa_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")
 	im = PIL.Image.open("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")#.convert2byte()
 	MAP = ImageTk.PhotoImage(im)
@@ -271,13 +298,16 @@ def startup_function():
 	map_display_temp.image = MAP_temp # keep a reference!
 	map_display_temp.grid(row=4,column=2, columnspan=3)
 	program_print('')
+	# checks if user supplied an unknown argument and informs them in the PROGRAM_OUTPUT box
 	unknown_arg_text = 'UNKNOWN ARGUMENT SUPPLIED BY USER ' + str(unknown_arg)
 	program_print(unknown_arg_text)
 
 def ping_noaa():
+	'''working on this, apparently you are not allowed to ping the government'''
 	os.system("ping ")
 
 def get_date(start, delta):
+	'''gets start date'''
 	newdate = start + datetime.timedelta(-delta)
 	return str(newdate)
 
@@ -337,7 +367,7 @@ def ram_save_intro():
 	if sys.argv:
 		args = list(sys.argv)
 		if args[1] == '--v' or args[1] == '-version':
-			print 'v0.5.29'
+			print 'v0.5.32'
 			sys.exit()
 		if args[1] == '--g' or args[1] == '-graph':
 			generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
@@ -430,7 +460,7 @@ def ph_change(c):
 		if c <= activetemp and c > tempdist[tempdist.index(temperature)-1]:
 			break
 	program_print(activetemp)
-	return 7.95+0.0114*tempnumdist[tempdist.index(activetemp)]
+	return round(7.95+0.0114*tempnumdist[tempdist.index(activetemp)]+random.random(), 3)
 
 def continuousscan():
 	global keepgoing
@@ -484,8 +514,5 @@ main.config(menu=menubar)
 main.after(0,ram_save_intro)
 main.after(500, startup_function)
 main.iconbitmap(default='../coralicon.ico')
-# main.attributes('-fullscreen', True)
-# w, h = main.winfo_screenwidth(), main.winfo_screenheight()
-# main.geometry("%dx%d+0+0" % (w, h))
 main.state('zoomed')
 main.mainloop()
