@@ -1,6 +1,6 @@
 ##############################################
 # written by Joseph Farah on April 21, 2017
-# Last updated June 8th 2017
+# Last updated June 25th 2017
 ##############################################
 
 ##############################################
@@ -25,9 +25,12 @@ import shutil
 import urllib
 import sys
 
+plt.style.use('classic')
+
 ##############################################
 # count vars, global 
 ##############################################
+
 
 # color and temperature ranges
 no_stress_color_range = '#ffffff'
@@ -78,6 +81,22 @@ unknown_arg = ''
 # variable for the continuous scan, is used by two
 # functions so must be global and declared before hand
 keepgoing = 0
+
+class fragile(object):
+    class Break(Exception):
+      """Break out of the with statement"""
+
+    def __init__(self, value):
+        self.value = value
+
+    def __enter__(self):
+        return self.value.__enter__()
+
+    def __exit__(self, etype, value, traceback):
+        error = self.value.__exit__(etype, value, traceback)
+        if etype == self.Break:
+            return True
+        return error
 
 # defining the tkinter window
 main = Tk()
@@ -154,6 +173,19 @@ def count_pixels(im):
 	# returns the number of pixels
 	return pixels
 
+def find_difference(list1, list2):
+	'''given two lists, return a third list that removes all the elements from list 2 that exist in list 1'''
+	previous_list = list1
+	append_list = list2
+	for new_element in list2:
+		comp1 = new_element[-1]
+		for old_element in list1:
+			comp2 = old_element[-1]
+			if comp2 == comp1:
+				del append_list[list2.index(old_element)]
+	return previous_list + append_list
+
+
 def get_percentages(im, num):
 	'''Does the math work of getting the percentages of each pixel color and writing them to the data file'''
 	# globalizing all variables needed
@@ -169,9 +201,11 @@ def get_percentages(im, num):
 	program_print("GETTING DATE TIME")
 	# gets the date and time that the map was used by examining today's date and the placement of the gif entry in the file
 	st = get_date(datetime.date.today(), 19+(27-int(num)))
+	day_number = str(datetime.datetime.now().timetuple().tm_yday) + '.' + str(datetime.datetime.now().year)
+	day_number = float(day_number)-(19+(27-int(num)))
 	program_print(ts)
 	# preps to add everything to the database by sticking it in a list first
-	database_input_list = [st, no_stress/pixels, watch_color/pixels, warning_color/pixels, alert_1_color/pixels, alert_2_color/pixels]
+	database_input_list = [st, no_stress/pixels, watch_color/pixels, warning_color/pixels, alert_1_color/pixels, alert_2_color/pixels, day_number]
 	# im not even sure what this does, but do i want to risk taking it away?
 	for element in database_input_list:
 		if database_input_list.index(element) == 0:
@@ -180,7 +214,24 @@ def get_percentages(im, num):
 	# concatenates each line into a string 
 	database_input = "".join(str(database_input_list))
 	# opens the database file and sticks it in there
-	with open(os.path.normpath(database_file), "a") as database:
+	with open(database_file, "r") as database:
+		dataset = []
+		data = []
+		tmp_id_nums = []
+		# read it into a list, each new line is a new entry
+		data = database.read().splitlines()
+		for d1 in data:
+			# get rid of the brackets and the commas
+			tmp = d1.strip('[]')
+			dataset.append([d.strip() for d in tmp.split(',')])
+		for element in dataset:
+			tmp_id_nums.append(element[-1])
+
+	with fragile(open(os.path.normpath(database_file), "a")) as database:
+		# print database_input_list[-1]
+		print tmp_id_nums
+		if str(database_input_list[-1]) in tmp_id_nums:
+			raise fragile.Break
 		database.write(database_input+'\n')	
 		# reads the data back out in preparation for the graph making
 	with open(database_file, "r") as database:
@@ -225,7 +276,7 @@ def generate_graphs(database_file):
 	# defins the figure and axes
 	fig, ax = plt.subplots(1,1)
 	# sets the background color
-	ax.set_axis_bgcolor((0, 0, 0))
+	# ax.set_axis_bgcolor((0, 0, 0))
 	# labels and plots all of the various data sets
 	ax.plot(x_values_num, watch_data_points, color="yellow", label = 'WATCH')
 	ax.plot(x_values_num, warning_data_points, color="orange", label = 'WARNING')
@@ -475,7 +526,6 @@ def stopscan():
 	keepgoing = 0
 
 # THE FUNCTIONs STOPS HERE. HERE BE DRAGONS
-
 
 
 # smain function running		
