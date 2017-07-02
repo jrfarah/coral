@@ -1,6 +1,6 @@
 ##############################################
 # written by Joseph Farah on April 21, 2017
-# Last updated June 25th 2017
+# Last updated July 27th 2017
 ##############################################
 
 ##############################################
@@ -100,6 +100,12 @@ class fragile(object):
 
 # defining the tkinter window
 main = Tk()
+
+
+
+
+
+
 
 ##############################################
 # FUNCTION DEFINITIONS, ABANDON ALL HOPE HE 
@@ -418,7 +424,7 @@ def ram_save_intro():
 	if sys.argv:
 		args = list(sys.argv)
 		if args[1] == '--v' or args[1] == '-version':
-			print 'v0.5.32'
+			print 'v0.5.34'
 			sys.exit()
 		if args[1] == '--g' or args[1] == '-graph':
 			generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
@@ -526,6 +532,13 @@ def stopscan():
 	keepgoing = 0
 
 # THE FUNCTIONs STOPS HERE. HERE BE DRAGONS
+
+
+
+
+
+
+
 
 
 # smain function running		
