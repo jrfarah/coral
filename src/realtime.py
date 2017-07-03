@@ -326,6 +326,7 @@ def save_graph():
 def startup_function():
 	'''the functiont that has to run as soon as the program starts up. loads all images, quickly loads databases for later reading, and displays some startup text to the user'''
 	global unknown_arg
+	NUM_BUTTONS_RIGHT_COLUMN = 3
 	# opens and loads the database file into the corresponding tkinter window
 	with open(database_file, "r") as database:
 		bleaching_database_view.delete('1.0', END)
@@ -344,7 +345,7 @@ def startup_function():
 	program_ouput.insert(INSERT, 'MAP CONVERTED TO PNG\n')
 	map_display = Label(main, image=MAP)
 	map_display.image = MAP # keep a reference!
-	map_display.grid(row=2,column=2, columnspan=3)
+	map_display.grid(row=2,column=2, columnspan=NUM_BUTTONS_RIGHT_COLUMN)
 	program_ouput.insert(INSERT, 'MAP SUCCESSFULLY DISPLAYED\n')
 
 	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_sst_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png")
@@ -353,7 +354,7 @@ def startup_function():
 	MAP_temp = ImageTk.PhotoImage(im_temp)
 	map_display_temp = Label(main, image=MAP_temp)
 	map_display_temp.image = MAP_temp # keep a reference!
-	map_display_temp.grid(row=4,column=2, columnspan=3)
+	map_display_temp.grid(row=4,column=2, columnspan=NUM_BUTTONS_RIGHT_COLUMN)
 	program_print('')
 	# checks if user supplied an unknown argument and informs them in the PROGRAM_OUTPUT box
 	unknown_arg_text = 'UNKNOWN ARGUMENT SUPPLIED BY USER ' + str(unknown_arg)
@@ -424,7 +425,7 @@ def ram_save_intro():
 	if sys.argv:
 		args = list(sys.argv)
 		if args[1] == '--v' or args[1] == '-version':
-			print 'v0.5.34'
+			print 'v0.5.35'
 			sys.exit()
 		if args[1] == '--g' or args[1] == '-graph':
 			generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
@@ -436,10 +437,6 @@ def ram_save_intro():
 	top = Toplevel()
 	top.title('Welcome')
 	Message(top, text='LOADING MAPS, PLEASE BE PATIENT', padx=20, pady=20).pack()
-    # splash = PIL.Image.open('../coralicon.png')
-    # top.splash = splash
-    # splashobj = ImageTk.PhotoImage(splash)
-    # Label(top, image=splashobj).pack()
 	top.lift(aboveThis=main)
 	top.after(500, top.destroy)
 
