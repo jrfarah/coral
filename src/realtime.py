@@ -24,6 +24,11 @@ import tkMessageBox as tkmb
 import shutil
 import urllib
 import sys
+import re
+import urllib2
+from BeautifulSoup import BeautifulSoup as soup
+import ssl
+import requests
 
 plt.style.use('classic')
 
@@ -192,6 +197,22 @@ def find_difference(list1, list2):
 	return previous_list + append_list
 
 
+def get_climate_change_statistics():
+	url = "https://climate.nasa.gov"
+	context = ssl._create_unverified_context()
+	gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+	web_soup = soup(requests.get(url, verify=False).text)
+
+	l = []
+
+	# get main-content div
+	main_div = web_soup.findAll(name="div", attrs={'class': 'change_number'})
+	for element in main_div:
+		print element
+		l.append(float(str(element)[27:-7]))
+
+	return l
+
 def get_percentages(im, num):
 	'''Does the math work of getting the percentages of each pixel color and writing them to the data file'''
 	# globalizing all variables needed
@@ -326,7 +347,7 @@ def save_graph():
 def startup_function():
 	'''the functiont that has to run as soon as the program starts up. loads all images, quickly loads databases for later reading, and displays some startup text to the user'''
 	global unknown_arg
-	NUM_BUTTONS_RIGHT_COLUMN = 3
+	NUM_BUTTONS_RIGHT_COLUMN = 5
 	# opens and loads the database file into the corresponding tkinter window
 	with open(database_file, "r") as database:
 		bleaching_database_view.delete('1.0', END)
@@ -338,6 +359,13 @@ def startup_function():
 		info_tmp = info.read()
 		program_ouput.insert(INSERT, info_tmp)	
 	
+	# downloads current relevant statistics and places them into the window
+	current_stats = get_climate_change_statistics()
+	print current_stats
+	Label(main, text = 'Global Carbon Dioxide (ppm): {0}'.format(current_stats[0])).grid(row = 0,column = 2)
+	Label(main, text = 'Global temperature increase since 1880 (degrees F): {0}'.format(current_stats[1])).grid(row = 0,column = 3)
+	Label(main, text = 'Imcrease in sea level (yearly, mm): {0}'.format(current_stats[4])).grid(row = 0,column = 4)
+
 	# downloads current relevant bleaching and temperature data and displays them on the right half of the prpogram window
 	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current/cur_b05kmnn_max_r07d_baa_45ns.gif", "C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")
 	im = PIL.Image.open("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")#.convert2byte()
@@ -567,12 +595,13 @@ Label(main,text = 'REALTIME DATABASE FILE VIEW').grid(row=1, column=0,columnspan
 Label(main,text = 'PROGRAM OUTPUT').grid(row=3, column=0,columnspan=2)
 Button(main,text='Get percentages!', command=lambda:analyze_images()).grid(row = 0, column=1)
 Button(main,text='Show graph', command=lambda:generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")).grid(row = 0, column=0)
-Button(main, text = 'Show daily change map/Refresh daily change map', command=show_daily_change).grid(row = 0,column = 2)
-Button(main, text = 'Show cumulative reef stress (all datasets)', command=show_cumulative).grid(row = 0,column = 3)
-Button(main, text = 'Show reef stress forecast (all datasets)', command=show_forecast).grid(row = 0,column = 4)
+Button(main, text = 'Show daily change map/Refresh daily change map', command=show_daily_change).grid(row = 1,column = 2)
+Button(main, text = 'Show cumulative reef stress (all datasets)', command=show_cumulative).grid(row = 1,column = 3)
+Button(main, text = 'Show reef stress forecast', command=show_forecast).grid(row = 1,column = 4)
 main.config(menu=menubar)
 main.after(0,ram_save_intro)
 main.after(500, startup_function)
 main.iconbitmap(default='../coralicon.ico')
 main.state('zoomed')
+main.wm_title("CORAL: Real-time reef bleaching tracker")
 main.mainloop()
