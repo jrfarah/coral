@@ -213,10 +213,11 @@ def get_climate_change_statistics():
 
 	return l
 
-def get_percentages(im, num):
+def get_percentages(im, num, db_file):
 	'''Does the math work of getting the percentages of each pixel color and writing them to the data file'''
 	# globalizing all variables needed
 	global no_stress_color_range, watch_color_range, warning_color_range, alert_1_color_range, alert_2_color_range, no_stress, watch_color, warning_color, alert_1_color, alert_2_color, black_color_range, black, land_range, land, database_file, bleaching_database_view
+	database_file = db_file
 	# sets all counter variables to zero in preparation for count_pixels, this MUST BE DONE BEFOREHAND
 	no_stress, watch_color, warning_color, alert_1_color, alert_2_color = 0,0,0,0,0
 	# floats the number of pixels returned so it can be used in the percentage count
@@ -326,8 +327,17 @@ def analyze_images():
 	file_path = os.path.normpath("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")
 	imageObject = PIL.Image.open(file_path) #Can be many different formats.
 	# gets the percentages for each entry in the gif (last 30 days, so technically historical)
-	get_percentages(imageObject)
-	tkmb.showinfo("Process Completed","Process complete, GRAPH ready to be GENERATED")	
+	get_percentages(imageObject, 1, os.path.normpath(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db"))
+	tkmb.showinfo("Process Completed","Process complete, GRAPH ready to be GENERATED")
+
+def analyze_cumulative():
+	download_current_image("https://coralreefwatch.noaa.gov/satellite/bleaching5km/images_current_composite/cur_b05kmnn_baa_max_45ns.gif", 
+							"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_cumulative.png")
+	im = PIL.Image.open("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_cumulative.png")
+	file_path = os.path.normpath("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_cumulative.png")
+	imageObject = PIL.Image.open(file_path)
+	get_percentages(imageObject, 1, os.path.normpath(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime_cumulative.db"))
+	tkmb.showinfo("Process complete", "Added cumulative data to relevant databases")
 
 def download_current_image(url_link, path_to_save):
 	'''function to download image, just makes it overall more readable'''
@@ -443,7 +453,7 @@ def analyze_historical_images(folder_link):
 			print file_path
 			imageObject = PIL.Image.open(file_path) #Can be many different formats.
 			tmp_num = file.strip('.png').strip('test')
-			get_percentages(imageObject, tmp_num)
+			get_percentages(imageObject, tmp_num, os.path.normpath(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db"))
 	program_print("HISTORICAL ANALYSIS COMPLETE")
 	program_print("PIXEL ANALYSIS SUCCESSFUL. GRAPH CAN BE DISPLAYED.")
 
@@ -500,7 +510,7 @@ def show_forecast():
 def depict_ph_increase(x,y,color, imobject):
 	program_print(color)
 	draw = PIL.ImageDraw.Draw(imobject)
-	draw.text((x, y),"<--"+str(ph_change(color))+' [H+]',(255,255,255))
+	draw.text((x, y),"<--"+str(ph_change(color,x,y))+' [H+]',(255,255,255))
 	imobject.save('tmp-out.gif')
 	im_temp = PIL.Image.open("tmp-out.gif")#.convert2byte()
 	im_temp = im_temp.resize((930, 340))
@@ -534,7 +544,7 @@ def tempdrawimage(imobject):
 	map_display_temp.image = MAP_temp # keep a reference!
 	map_display_temp.grid(row=4,column=2, columnspan=3)
 
-def ph_change(c):
+def ph_change(c, ex, why):
 	tempnumdist = [-2,0,5,10,15,20,25,30,35]
 	tempdist = [negativetwo,zero,five,ten,fifteen,twenty,twentyfive,thirty,thirtyfive]
 	for temperature in tempdist:
@@ -542,7 +552,13 @@ def ph_change(c):
 		if c <= activetemp and c > tempdist[tempdist.index(temperature)-1]:
 			break
 	program_print(activetemp)
-	return round(7.95+0.0114*tempnumdist[tempdist.index(activetemp)]+random.random(), 3)
+	ph_value = round(7.95+0.0114*tempnumdist[tempdist.index(activetemp)]+random.uniform(0,0.5), 3)
+	date_value = datetime.datetime.now()
+	with open(r"C:\Users\Joseph Farah\Documents\python\coral\db\ph.db", 'a') as ph_db:
+		ph_input_str = str(ex) + ',' + str(why) +',' + str(ph_value) + ',' + str(date_value) + '\n'
+		ph_db.write(ph_input_str)
+
+
 
 def continuousscan():
 	global keepgoing
@@ -556,7 +572,28 @@ def stopscan():
 	global keepgoing
 	keepgoing = 0
 
-# THE FUNCTIONs STOPS HERE. HERE BE DRAGONS
+
+def display_hurricane(url):
+	top = Toplevel()
+	top.title("Displaying weather from around the world")
+	
+	download_current_image(url, r"C:\Users\Joseph Farah\Documents\python\coral\db\hurricane.png")
+
+	# mappic = Label(top, image=os.path.normpath("C:/Users/Joseph Farah/Documents/python/coral/db/hurricane.png")).pack()
+
+	im_temp = PIL.Image.open("C:/Users/Joseph Farah/Documents/python/coral/db/hurricane.png")#.convert2byte()
+	# im_temp = im_temp.resize((930, 340))
+	MAP_temp = ImageTk.PhotoImage(im_temp)
+	map_display_temp = Label(top, image=MAP_temp)
+	map_display_temp.image = MAP_temp # keep a reference!
+
+	map_display_temp.pack()
+
+	button = Button(top, text="Dismiss", command=top.destroy)
+	button.pack()
+	top.mainloop()
+
+# THE FUNCTIONS STOPS HERE. HERE BE DRAGONS
 
 
 
@@ -591,9 +628,16 @@ ph.add_separator()
 ph.add_command(label="Exit", command=main.quit)
 menubar.add_cascade(label="pH Mapping", menu=ph)
 
+weather = Menu(menubar, tearoff=0)
+weather.add_command(label='View Pacific Hurricane alerts', command=lambda:display_hurricane("http://www.nhc.noaa.gov/xgtwo/two_pac_5d0.png"))
+weather.add_command(label='View Atlantic Hurricane alerts', command=lambda:display_hurricane("http://www.nhc.noaa.gov/xgtwo/two_atl_5d0.png"))
+weather.add_command(label='View Global Temperature Hotspots', command=lambda:display_hurricane("http://www.ospo.noaa.gov/data/cb/hotspots/hotspotgcurrent.gif"))
+menubar.add_cascade(label="Worldwide Weather Watch", menu=weather)
+
+
 Label(main,text = 'REALTIME DATABASE FILE VIEW').grid(row=1, column=0,columnspan=2)
 Label(main,text = 'PROGRAM OUTPUT').grid(row=3, column=0,columnspan=2)
-Button(main,text='Get percentages!', command=lambda:analyze_images()).grid(row = 0, column=1)
+Button(main,text='Get percentages!', command=lambda:analyze_cumulative()).grid(row = 0, column=1)
 Button(main,text='Show graph', command=lambda:generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")).grid(row = 0, column=0)
 Button(main, text = 'Show daily change map/Refresh daily change map', command=show_daily_change).grid(row = 1,column = 2)
 Button(main, text = 'Show cumulative reef stress (all datasets)', command=show_cumulative).grid(row = 1,column = 3)
