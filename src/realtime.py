@@ -1,6 +1,6 @@
 ##############################################
 # written by Joseph Farah on April 21, 2017
-# Last updated July 27th 2017
+# Last updated July 18th 2017
 ##############################################
 
 ##############################################
@@ -485,7 +485,7 @@ def ram_save_intro():
 	if sys.argv:
 		args = list(sys.argv)
 		if args[1] == '--v' or args[1] == '-version':
-			print 'v0.5.38'
+			print 'v0.1.0'
 			sys.exit()
 		if args[1] == '--g' or args[1] == '-graph':
 			generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
@@ -799,7 +799,7 @@ Button(main, text = 'Show daily change map/Refresh daily change map', command=sh
 Button(main, text = 'Show cumulative reef stress (all datasets)', command=show_cumulative).grid(row = 1,column = 3)
 Button(main, text = 'Show reef stress forecast', command=show_forecast).grid(row = 1,column = 4)
 main.config(menu=menubar)
-main.after(0,ram_save_intro)
+# main.after(250,ram_save_intro)
 main.after(500, startup_function)
 main.iconbitmap(default='../coralicon.ico')
 main.state('zoomed')
