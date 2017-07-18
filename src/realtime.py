@@ -38,7 +38,7 @@ plt.style.use('classic')
 
 
 # color and temperature ranges
-no_stress_color_range = '#ffffff'
+no_stress_color_range = '#c8fafa'
 watch_color_range = '#fff000'
 warning_color_range = "#faaa0a"
 alert_1_color_range = "#f00000"
@@ -87,6 +87,9 @@ unknown_arg = ''
 # functions so must be global and declared before hand
 keepgoing = 0
 
+# number of pH iterations
+num_iter = 0
+
 class fragile(object):
     class Break(Exception):
       """Break out of the with statement"""
@@ -102,6 +105,25 @@ class fragile(object):
         if etype == self.Break:
             return True
         return error
+
+class element_input:
+    def __init__(self, parent, CONSTANT):
+
+        top = self.top = Toplevel(parent)
+        Label(top, text="Please enter how many times you want pH_collect to run").pack()
+
+        self.e = Entry(top)
+        self.e.pack(padx=5)
+
+        b = Button(top, text="submit", command=self.enter_element)
+        b.pack(pady=5)
+
+    def enter_element(self):
+    	global iterations
+        new_value = self.e.get()
+        iterations = int(new_value)
+
+        self.top.destroy()
 
 # defining the tkinter window
 main = Tk()
@@ -463,7 +485,7 @@ def ram_save_intro():
 	if sys.argv:
 		args = list(sys.argv)
 		if args[1] == '--v' or args[1] == '-version':
-			print 'v0.5.35'
+			print 'v0.5.38'
 			sys.exit()
 		if args[1] == '--g' or args[1] == '-graph':
 			generate_graphs(r"C:\Users\Joseph Farah\Documents\python\coral\db\realtime.db")
@@ -557,13 +579,13 @@ def ph_change(c, ex, why):
 	with open(r"C:\Users\Joseph Farah\Documents\python\coral\db\ph.db", 'a') as ph_db:
 		ph_input_str = str(ex) + ',' + str(why) +',' + str(ph_value) + ',' + str(date_value) + '\n'
 		ph_db.write(ph_input_str)
-
+	return ph_value
 
 
 def continuousscan():
 	global keepgoing
 	keepgoing = 1
-	while keepgoing == 1:
+	while keepgoing != 0:
 		read_temp_pixels(r"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png",(40,240),(100,810))
 		main.update()
 
@@ -571,6 +593,72 @@ def continuousscan():
 def stopscan():
 	global keepgoing
 	keepgoing = 0
+
+def ph_vs_bleaching():
+	iterations = 5
+	keepgoing = -1*iterations
+	while keepgoing<0:
+		if keepgoing != 0:
+			read_temp_pixels(r"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png",(40,240),(100,810))
+		keepgoing += 1
+
+	ns, w, wa, a1, a2, points = 0,0,0,0,0,0
+	labels = ['NO STRESS', 'WATCH', 'WARNING', 'ALERT1', 'ALERT2']
+	neutral, increase = 0,0
+	with open(r"C:\Users\Joseph Farah\Documents\python\coral\db\ph.db", 'r') as ph_db:
+		ph_data = ph_db.read().splitlines()
+
+	data_list = []
+	for element in ph_data:
+		data_list.append(element.split(','))
+
+	file_path = os.path.normpath("C:\Users\Joseph Farah\Documents\python\coral\db\current_frame.png")
+	imageObject = PIL.Image.open(file_path)
+	for entry in data_list:
+		x = int(entry[0])
+		y = int(entry[1])
+		pH = float(entry[2])
+		color = get_pixel_color(imageObject, x, y)
+		color = convert_RGB_HEX(color)
+		if pH >= 8.5:
+			points += 1
+			# checks color of pixel against predefined ranges
+			if color == no_stress_color_range:
+				ns += 1
+				neutral += 1
+				continue
+			elif color == watch_color_range:
+				w += 1
+				increase += 1
+				continue
+			elif color ==  warning_color_range:
+				wa += 1
+				increase += 1
+				continue
+			elif color == alert_1_color_range:
+				a1 += 1
+				increase += 1
+				continue
+			elif color == alert_2_color_range:
+				a2 += 1
+				increase += 1
+				continue
+			else:
+				program_print("Error in pH analysis: color not found. Aborting.")
+				program_print(color)
+				return
+	print ns, w, wa, a1, a2
+	sizes = [float(ns)/float(points), float(w)/float(points), float(wa)/float(points), float(a1)/float(points), float(a2)/float(points)]
+	explode = (0,0.2,0.4,0.6,0.8)
+	fig1, ax1 = plt.subplots()
+	ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+	        shadow=True, startangle=90)
+	ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+	ax1.set_title('Percentages of pH increases that resulted in alert status', 
+             bbox={'facecolor':'0.8', 'pad':3})
+
+	plt.show()
+
 
 
 def display_hurricane(url):
@@ -624,6 +712,7 @@ ph = Menu(menubar, tearoff=0)
 ph.add_command(label="Atlantic Ocean Top", command=lambda:read_temp_pixels(r"C:\Users\Joseph Farah\Documents\python\coral\db\current_frame_temp.png",(68,132),(710,810) ))
 ph.add_command(label="Continuous Scan", command=continuousscan)
 ph.add_command(label="Stop Scan", command=stopscan)
+ph.add_command(label="Collect pH data", command=ph_vs_bleaching)
 ph.add_separator()
 ph.add_command(label="Exit", command=main.quit)
 menubar.add_cascade(label="pH Mapping", menu=ph)
